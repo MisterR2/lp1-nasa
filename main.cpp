@@ -82,6 +82,7 @@ int main(){
         // Processar a option do usuário
         switch(option) {
             case 1:
+                system("clear");
                 cout << "Você escolheu a Opção 1." << endl;
 
                 cout << "Insira o nome do astronauta: ";
@@ -108,6 +109,7 @@ int main(){
                 break;
 
             case 2:
+                system("clear");
                 cout << "Você escolheu a Opção 2." << endl;
                 newCode = stoi(generateIdentity(3));
                 flight = new Flight(newCode);
@@ -115,6 +117,7 @@ int main(){
                 break;
 
             case 3:
+                system("clear");
                 cout << "Você escolheu a Opção 3." << endl;
                 
                 cout << "Insira o código do voo: " << endl;
@@ -128,10 +131,12 @@ int main(){
 
             case 4:
                 cout << "Você escolheu a Opção 4." << endl;
+                system("clear");
                 Astronaut::listAstronauts();
                 break;
             case 5:
                 cout << "Você escolheu a Opção 5." << endl;
+                system("clear");
                 Flight::listFlights();
                 break;
             case 10:
