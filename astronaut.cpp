@@ -13,17 +13,32 @@ Astronaut::Astronaut(string id, string name, int age)
     this->name = name;
     this->age = age;
 
+    cout << "Astronauta cadastrado com sucesso!" << endl;
+
     astronauts.push_back(this);
 
 }
 
-void Astronaut::listAstronauts(){
-    cout << "Lista de todos os astronautas:" << endl;
-        for (const auto& astronaut : astronauts) {
-            // Imprima ou faça operações com os objetos aqui
-            // Exemplo: std::cout << *obj << std::endl;
+vector<Astronaut *> Astronaut::getAstronauts()
+{
+    return astronauts;
+}
+
+void Astronaut::listAstronauts()
+{
+
+    if (astronauts.empty())
+    {
+        cout << "Não há astronautas cadastrados." << endl;
+    }
+    else
+    {
+        cout << "Lista de todos os astronautas:" << endl;
+        for (const auto &astronaut : astronauts)
+        {
             cout << "NOME: " << astronaut->getName() << " - CPF: " << astronaut->getIdentity() << " - IDADE: " << astronaut->getAge() << " anos" << endl;
         }
+    }
 }
 
 void Astronaut::setIdentity(int newId)

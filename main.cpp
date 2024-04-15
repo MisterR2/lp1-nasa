@@ -11,7 +11,7 @@ using namespace std;
 #include "astronaut.h"
 #include "flight.h"
 
-string generateIdentity(){
+string generateIdentity(int length){
     ostringstream oss;
     auto now = chrono::system_clock::now();
     time_t current_time = chrono::system_clock::to_time_t(now);
@@ -19,15 +19,15 @@ string generateIdentity(){
     srand(static_cast<unsigned>(current_time));
     string rndId;
 
-    for (int i = 0; i < 11; ++i) {
+    for (int i = 0; i < length; ++i) {
         oss << rand() % 10;
     }
 
     rndId = oss.str();
 
-    if (Astronaut::isIdUsed(rndId))
+    if ( Astronaut::isIdUsed(rndId) && length == 11)
     {
-        return generateIdentity();
+        return generateIdentity(length);
     }
     
 
@@ -49,10 +49,12 @@ int main(){
     int age;
     string age_str;
     size_t space_pos;
+    int newCode;
+    int flightCode;
+    string passengerID;
 
-
-    Flight* f = nullptr;
-    Astronaut* a = nullptr;
+    Flight* flight = nullptr;
+    Astronaut* astronaut = nullptr;
 
     // Criar um objeto ostringstream para construir a string
     
@@ -70,6 +72,7 @@ int main(){
         cout << "2 - Cadastrar voo" << endl;
         cout << "3 - Cadastrar astronauta em voo" << endl;
         cout << "4 - Listar astronautas" << endl;
+        cout << "5 - Listar Voos" << endl;
         cout << "10 - Sair" << endl;
         cout << "Escolha uma opção: ";
         
@@ -100,25 +103,36 @@ int main(){
 
                 } while (age_str.empty() || age < 0 || !isInteger(age_str));
                 
-                a = new Astronaut(generateIdentity(), name, age);
+                astronaut = new Astronaut(generateIdentity(11), name, age);
 
                 break;
 
             case 2:
                 cout << "Você escolheu a Opção 2." << endl;
-                f = new Flight(rand());
-
-                cout << f->getCode() << endl;
-                f->getPassengers();
+                newCode = stoi(generateIdentity(3));
+                flight = new Flight(newCode);
+                flight->getPassengers();
                 break;
 
             case 3:
                 cout << "Você escolheu a Opção 3." << endl;
+                
+                cout << "Insira o código do voo: " << endl;
+                cin >> flightCode;
+
+                cout << "Insira o CPF do astronauta: " << endl;
+                cin >> passengerID;
+
+                Flight::addPassenger(flightCode, passengerID);
                 break;
 
             case 4:
                 cout << "Você escolheu a Opção 4." << endl;
                 Astronaut::listAstronauts();
+                break;
+            case 5:
+                cout << "Você escolheu a Opção 5." << endl;
+                Flight::listFlights();
                 break;
             case 10:
                 cout << "Saindo..." << endl;

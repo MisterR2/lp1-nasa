@@ -22,9 +22,10 @@ public:
     string getIdentity();
     string getName();
     int getAge();
-
-    static void listAstronauts();
     void setIdentity(int newId);
+
+    static vector<Astronaut*> getAstronauts();
+    static void listAstronauts();
     static bool isIdUsed(string rndID);
 };
 
