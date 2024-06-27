@@ -3,6 +3,8 @@
 #include <chrono>
 #include <sstream>
 #include <cctype>
+#include <typeinfo>
+#include <limits>
 
 using std::cout;
 using std::cin;
@@ -73,11 +75,25 @@ int main(){
         cout << "3 - Cadastrar astronauta em voo" << endl;
         cout << "4 - Listar astronautas" << endl;
         cout << "5 - Listar Voos" << endl;
+        cout << "6 - Remover astronauta de voo" << endl;
         cout << "10 - Sair" << endl;
         cout << "Escolha uma opção: ";
         
         // Obter a escolha do usuário
         cin >> option;
+
+        // Verificar se a entrada foi inválida
+        if (cin.fail()) {
+            // Limpar o estado de erro
+            cin.clear();
+            // Ignorar a entrada inválida
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Opção inválida! Por favor, insira um número." << endl;
+            // Pausar a execução para que o usuário possa ver a mensagem
+            cout << "Pressione Enter para continuar...";
+            cin.get();
+            continue; // Voltar ao início do loop
+        }
 
         // Processar a option do usuário
         switch(option) {
@@ -85,15 +101,24 @@ int main(){
                 system("clear");
                 cout << "Você escolheu a Opção 1." << endl;
 
-                cout << "Insira o nome do astronauta: ";
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                getline(cin, name);
+                
+
+                 do {
+                    cout << "Insira o nome do astronauta: ";
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    getline(cin, name);
+
+                    if (name.empty()) {
+                        cout << "O nome não pode estar vazio. Por favor, insira novamente." << endl;
+                    }else{
+                        break;
+                    }
+                } while (name.empty());
 
                 do {
                     cout << "Insira a idade do astronauta: ";
                     cin >> age_str;
-
-                    // Verificar se a idade é um inteiro
+                    
                     if (!isInteger(age_str)) {
                         cout << "Idade inserida não é um inteiro. Por favor, insira novamente." << endl;
                         continue;
@@ -113,18 +138,33 @@ int main(){
                 cout << "Você escolheu a Opção 2." << endl;
                 newCode = stoi(generateIdentity(3));
                 flight = new Flight(newCode);
-                flight->getPassengers();
+                flight->listPassengers();
                 break;
 
             case 3:
                 system("clear");
                 cout << "Você escolheu a Opção 3." << endl;
                 
-                cout << "Insira o código do voo: " << endl;
-                cin >> flightCode;
+                Astronaut::listAstronauts();
+                cout << endl;
+                Flight::listFlights();
+                cout << endl;
 
-                cout << "Insira o CPF do astronauta: " << endl;
+                cout << "Insira o código do voo (ou '0' para voltar ao menu): ";
+                cin >> flightCode;
+                
+                if (cin.fail() || flightCode == 0) {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    break;
+                }
+
+                cout << "Insira o CPF do astronauta (ou '0' para voltar ao menu): ";
                 cin >> passengerID;
+                
+                if (passengerID == "0") {
+                    break; // Voltar ao menu principal
+                }
 
                 Flight::addPassenger(flightCode, passengerID);
                 break;
@@ -139,11 +179,27 @@ int main(){
                 system("clear");
                 Flight::listFlights();
                 break;
+            
+            case 6:
+                cout << "Você escolheu a Opção 6." << endl;
+                system("clear");
+                cout << "Insira o código do voo: " << endl;
+                cin >> flightCode;
+
+                cout << "Insira o CPF do astronauta: " << endl;
+                cin >> passengerID;
+
+                Flight::removePassenger(flightCode, passengerID);
+
+                break;
             case 10:
+                system("clear");
                 cout << "Saindo..." << endl;
                 break;
             default:
+                system("clear");
                 cout << "Opção inválida! Tente novamente." << endl;
+                break;
         }
 
         // Pausar a execução para que o usuário possa ver a mensagem

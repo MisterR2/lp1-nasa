@@ -1,17 +1,20 @@
 #include <iostream>
 #include "astronaut.h"
 #include <cstdlib>
+#include "flight.h"
 
 using std::cout;
 using std::cin;
 
-vector<Astronaut*> Astronaut::astronauts;
+list<Astronaut*> Astronaut::astronauts;
 
 Astronaut::Astronaut(string id, string name, int age)
 {
     this->identity = id;
     this->name = name;
     this->age = age;
+    this->alive = true;
+    this->available = true;
 
     cout << "Astronauta cadastrado com sucesso!" << endl;
 
@@ -19,7 +22,7 @@ Astronaut::Astronaut(string id, string name, int age)
 
 }
 
-vector<Astronaut *> Astronaut::getAstronauts()
+list<Astronaut *> Astronaut::getAstronauts()
 {
     return astronauts;
 }
@@ -37,6 +40,7 @@ void Astronaut::listAstronauts()
         for (const auto &astronaut : astronauts)
         {
             cout << "NOME: " << astronaut->getName() << " - CPF: " << astronaut->getIdentity() << " - IDADE: " << astronaut->getAge() << " anos" << endl;
+            astronaut->listFlights();
         }
     }
 }
@@ -64,7 +68,26 @@ string Astronaut::getIdentity(){
 
 string Astronaut::getName(){
     return name;
-};
+}
+
+void Astronaut::listFlights(){
+    bool foundFlights = false;
+    
+    for (auto& pair : Flight::getFlights()) {
+        Flight* flight = pair.second;
+        if (flight->getPassengers().find(this->getIdentity()) != flight->getPassengers().end()) {
+            if (!foundFlights) {
+                std::cout << "Voos deste astronauta:" << std::endl;
+                foundFlights = true;
+            }
+            std::cout << "CÓDIGO: " << flight->getCode() << " - STATUS: " << flight->getStatus() << std::endl;
+        }
+    }
+
+    if (!foundFlights) {
+        cout << "Esse astronauta não participou de voos." << endl;
+    }
+}
 
 int Astronaut::getAge(){
     return age;
