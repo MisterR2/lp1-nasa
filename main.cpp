@@ -54,14 +54,11 @@ int main(){
     int newCode;
     int flightCode;
     string passengerID;
+    int filterFlights;
+    int filterAstronauts;
 
     Flight* flight = nullptr;
     Astronaut* astronaut = nullptr;
-
-    // Criar um objeto ostringstream para construir a string
-    
-    
-    // Obter o tempo atual
     
 
     do {
@@ -76,6 +73,9 @@ int main(){
         cout << "4 - Listar astronautas" << endl;
         cout << "5 - Listar Voos" << endl;
         cout << "6 - Remover astronauta de voo" << endl;
+        cout << "7 - Lançar voo" << endl;
+        cout << "8 - Finalizar voo" << endl;
+        cout << "9 - Explodir voo" << endl;
         cout << "10 - Sair" << endl;
         cout << "Escolha uma opção: ";
         
@@ -99,10 +99,7 @@ int main(){
         switch(option) {
             case 1:
                 system("clear");
-                cout << "Você escolheu a Opção 1." << endl;
-
-                
-
+                cout << "============CADASTRO DE ASTRONAUTAS============" << endl;
                  do {
                     cout << "Insira o nome do astronauta: ";
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -135,7 +132,7 @@ int main(){
 
             case 2:
                 system("clear");
-                cout << "Você escolheu a Opção 2." << endl;
+                cout << "============CADASTRO DE VOOS============" << endl;
                 newCode = stoi(generateIdentity(3));
                 flight = new Flight(newCode);
                 flight->listPassengers();
@@ -143,11 +140,11 @@ int main(){
 
             case 3:
                 system("clear");
-                cout << "Você escolheu a Opção 3." << endl;
+                cout << "============INSERÇÃO DE ASTRONAUTA EM VOOS============" << endl;
                 
-                Astronaut::listAstronauts();
+                Astronaut::listAstronauts(2);
                 cout << endl;
-                Flight::listFlights();
+                Flight::listFlights(2);
                 cout << endl;
 
                 cout << "Insira o código do voo (ou '0' para voltar ao menu): ";
@@ -170,18 +167,66 @@ int main(){
                 break;
 
             case 4:
-                cout << "Você escolheu a Opção 4." << endl;
                 system("clear");
-                Astronaut::listAstronauts();
+                cout << "============LISTAGEM DE ASTRONAUTAS============" << endl;
+                cout << "Menu:" << endl;
+                cout << "1 - Listar todos os astronautas" << endl;
+                cout << "2 - Listar apenas astronautas disponíveis" << endl;
+                cout << "3 - Listar apenas astronautas indisponíveis" << endl;
+                cout << "4 - Listar apenas astronautas mortos" << endl;
+                cout << "Escolha uma opção: ";
+
+                cin >> filterAstronauts;
+
+                if (cin.fail()) {
+                    // Limpar o estado de erro
+                    cin.clear();
+                    // Ignorar a entrada inválida
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Opção inválida! Por favor, insira um número." << endl;
+                    // Pausar a execução para que o usuário possa ver a mensagem
+                    cout << "Pressione Enter para continuar...";
+                    cin.get();
+                    continue; // Voltar ao início do loop
+                }else
+                {
+                    Astronaut::listAstronauts(filterAstronauts);
+                }
+
+                
                 break;
             case 5:
-                cout << "Você escolheu a Opção 5." << endl;
                 system("clear");
-                Flight::listFlights();
+                cout << "============LISTAGEM DE VOOS============" << endl;
+                cout << "Menu:" << endl;
+                cout << "1 - Listar todos os voos" << endl;
+                cout << "2 - Listar apenas voos planejados" << endl;
+                cout << "3 - Listar apenas voos em curso" << endl;
+                cout << "4 - Listar apenas voos finalizados" << endl;
+                cout << "Escolha uma opção: ";
+                cin >> filterFlights;
+
+                if (cin.fail()) {
+                    // Limpar o estado de erro
+                    cin.clear();
+                    // Ignorar a entrada inválida
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Opção inválida! Por favor, insira um número." << endl;
+                    // Pausar a execução para que o usuário possa ver a mensagem
+                    cout << "Pressione Enter para continuar...";
+                    cin.get();
+                    continue; // Voltar ao início do loop
+                }else
+                {
+                    Flight::listFlights(filterFlights);
+                }
+                
+
+                
                 break;
             
             case 6:
-                cout << "Você escolheu a Opção 6." << endl;
+                cout << "============REMOÇÃO DE ASTRONAUTAS DE VOOS============" << endl;
                 system("clear");
                 cout << "Insira o código do voo: " << endl;
                 cin >> flightCode;
@@ -190,6 +235,39 @@ int main(){
                 cin >> passengerID;
 
                 Flight::removePassenger(flightCode, passengerID);
+
+                break;
+            case 7:
+                cout << "============LANÇAMENTO DE VOOS============" << endl;
+                system("clear");
+                Flight::listFlights(2);
+                cout << endl;
+                cout << "Insira o código do voo a ser lançado: " << endl;
+                cin >> flightCode;
+
+                Flight::launchFlight(flightCode);
+
+                break;
+            case 8:
+                cout << "============FINALIZAÇÃO DE VOOS============" << endl;
+                system("clear");
+                Flight::listFlights(3);
+                cout << endl;
+                cout << "Insira o código do voo a ser finalizado: " << endl;
+                cin >> flightCode;
+
+                Flight::finishFlight(flightCode);
+
+                break;
+            case 9:
+                cout << "============DETONAÇÃO DE VOOS============" << endl;
+                system("clear");
+                Flight::listFlights();
+                cout << endl;
+                cout << "Insira o código do voo a ser explodido: " << endl;
+                cin >> flightCode;
+            
+                Flight::explodeFlight(flightCode);
 
                 break;
             case 10:

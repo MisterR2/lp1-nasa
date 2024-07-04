@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <list>
+#include <map>
 
 #ifndef ASTRONAUT_H
 #define ASTRONAUT_H
@@ -9,6 +9,7 @@
 using namespace std;
 
 class Flight;
+
 class Astronaut
 {
 private:
@@ -17,22 +18,29 @@ private:
     int age;
     bool available;
     bool alive;
-    list<Flight> flights;
+    map<int, Flight> flights;
 
-    static list<Astronaut*> astronauts;
+    static map<string, Astronaut*> astronauts;
 
 public:
-    
     Astronaut(string id, string name, int age);
     
     string getIdentity();
     string getName();
-    void listFlights();
-    int getAge();
-    void setIdentity(int newId);
+    bool getAvailable();
+    bool getAlive();
+    string getStatus();
+    map<int, Flight> getFlights();
 
-    static list<Astronaut*> getAstronauts();
-    static void listAstronauts();
+    void listFlights(string identity);
+    int getAge();
+    void setIdentity(string newId);
+    void setAvailable(bool status);
+    void setAlive(bool status);
+    void insertFlight(Flight* flight);
+
+    static map<string, Astronaut*> getAstronauts();
+    static void listAstronauts(int filter = 1);
     static bool isIdUsed(string rndID);
 };
 

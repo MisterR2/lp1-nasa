@@ -6,7 +6,7 @@
 using std::cout;
 using std::cin;
 
-list<Astronaut*> Astronaut::astronauts;
+map<string, Astronaut*> Astronaut::astronauts;
 
 Astronaut::Astronaut(string id, string name, int age)
 {
@@ -18,48 +18,107 @@ Astronaut::Astronaut(string id, string name, int age)
 
     cout << "Astronauta cadastrado com sucesso!" << endl;
 
-    astronauts.push_back(this);
-
+    astronauts[id] = this;
 }
 
-list<Astronaut *> Astronaut::getAstronauts()
+map<string, Astronaut *> Astronaut::getAstronauts()
 {
     return astronauts;
 }
 
-void Astronaut::listAstronauts()
+void Astronaut::listAstronauts(int filter)
 {
-
     if (astronauts.empty())
     {
         cout << "Não há astronautas cadastrados." << endl;
     }
     else
-    {
-        cout << "Lista de todos os astronautas:" << endl;
-        for (const auto &astronaut : astronauts)
+    {   
+        switch (filter)
         {
-            cout << "NOME: " << astronaut->getName() << " - CPF: " << astronaut->getIdentity() << " - IDADE: " << astronaut->getAge() << " anos" << endl;
-            astronaut->listFlights();
+        case 1:
+            cout << "Lista de todos os astronautas:" << endl;
+            for (auto &pair : astronauts)
+            {
+                Astronaut* astronaut = pair.second;
+                cout << "NOME: " << astronaut->getName() << " - CPF: " << astronaut->getIdentity() << " - IDADE: " << astronaut->getAge() << " anos" << " - STATUS:  "<< astronaut->getStatus() << endl;
+                astronaut->listFlights(astronaut->getIdentity());
+            }
+            break;
+        case 2:
+            cout << "Lista de todos os astronautas disponíveis:" << endl;
+            for (auto &pair : astronauts)
+            {   
+                Astronaut* astronaut = pair.second;
+                if (astronaut->getStatus() == "Disponível"){
+                    cout << "NOME: " << astronaut->getName() << " - CPF: " << astronaut->getIdentity() << " - IDADE: " << astronaut->getAge() << " anos" << " - STATUS:  "<< astronaut->getStatus() << endl;
+                    astronaut->listFlights(astronaut->getIdentity());
+                }
+                
+            }
+            break;
+        case 3:
+            cout << "Lista de todos os astronautas indisponíveis:" << endl;
+            for (auto &pair : astronauts)
+            {   
+                Astronaut* astronaut = pair.second;
+                if (astronaut->getStatus() == "Indisponível"){
+                    cout << "NOME: " << astronaut->getName() << " - CPF: " << astronaut->getIdentity() << " - IDADE: " << astronaut->getAge() << " anos" << " - STATUS:  "<< astronaut->getStatus() << endl;
+                    astronaut->listFlights(astronaut->getIdentity());
+                }
+                
+            }
+            break;
+        case 4:
+            cout << "Lista de todos os voos finalizados:" << endl;
+            for (auto &pair : astronauts)
+            {   
+                Astronaut* astronaut = pair.second;
+                if (astronaut->getStatus() == "Morto"){
+                    cout << "NOME: " << astronaut->getName() << " - CPF: " << astronaut->getIdentity() << " - IDADE: " << astronaut->getAge() << " anos" << " - STATUS:  "<< astronaut->getStatus() << endl;
+                    astronaut->listFlights(astronaut->getIdentity());
+                }
+                
+            }
+            break;
+        default:
+            cout << "Opção inválida!" << endl;
+            break;
         }
+        cout << "Lista de todos os astronautas:" << endl;
+        
     }
 }
 
-void Astronaut::setIdentity(int newId)
+void Astronaut::setIdentity(string newId)
 {   
-    this->identity = newId;
+    if (astronauts.find(newId) == astronauts.end()) {
+        astronauts.erase(this->identity);
+        this->identity = newId;
+        astronauts[newId] = this;
+    } else {
+        cout << "Erro: Novo ID já está em uso." << endl;
+    }
+}
+
+void Astronaut::setAvailable(bool status)
+{
+    this->available = status;
+}
+
+void Astronaut::setAlive(bool status)
+{
+    this->alive = status;
+}
+
+void Astronaut::insertFlight(Flight* flight)
+{
+    this->flights.insert({flight->getCode(), *flight});
 }
 
 bool Astronaut::isIdUsed(string rndID)
 {
-    for (const auto& astronaut : astronauts)
-    {
-        if (astronaut->getIdentity() == rndID)
-        {
-            return true;
-        }
-    }
-    return false;
+    return astronauts.find(rndID) != astronauts.end();
 }
 
 string Astronaut::getIdentity(){
@@ -70,24 +129,70 @@ string Astronaut::getName(){
     return name;
 }
 
-void Astronaut::listFlights(){
-    bool foundFlights = false;
+string Astronaut::getStatus()
+{
+    if (available && alive)
+    {
+        return "Disponível";
+    }
+    else if (!available && alive)
+    {
+        return "Indisponível";
+    }
+    else if(!alive)
+    {
+        return "Morto";
+    }else
+    {
+        return "Status Desconhecido";
+    }
     
-    for (auto& pair : Flight::getFlights()) {
-        Flight* flight = pair.second;
-        if (flight->getPassengers().find(this->getIdentity()) != flight->getPassengers().end()) {
-            if (!foundFlights) {
-                std::cout << "Voos deste astronauta:" << std::endl;
-                foundFlights = true;
-            }
-            std::cout << "CÓDIGO: " << flight->getCode() << " - STATUS: " << flight->getStatus() << std::endl;
-        }
+    
+}
+
+bool Astronaut::getAvailable()
+{
+    return available;
+}
+
+bool Astronaut::getAlive()
+{
+    return alive;
+}
+
+map<int, Flight> Astronaut::getFlights()
+{
+    return flights;
+}
+
+void Astronaut::listFlights(string identity) {
+    auto it = astronauts.find(identity);
+
+    if (it == astronauts.end())
+    {
+        cout << "Astronauta com cpf " << identity << " não encontrado." << endl;
+        return;
     }
 
-    if (!foundFlights) {
+    Astronaut* selectedAstronaut = it->second;
+    
+
+    if (selectedAstronaut->getFlights().empty())
+    {
         cout << "Esse astronauta não participou de voos." << endl;
+        cout << endl;
     }
-}
+    else
+    {
+        std::cout << "Voos deste astronauta:" << std::endl;
+        for (auto& flight : selectedAstronaut->getFlights()) {
+            std::cout << "CÓDIGO: " << flight.first << std::endl;
+            cout << endl;
+        }
+    }
+    
+    }
+
 
 int Astronaut::getAge(){
     return age;
